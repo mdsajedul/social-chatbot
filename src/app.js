@@ -107,6 +107,23 @@ app.post('/webhook-whatsapp', async (req, res) => {
     res.sendStatus(200);
 });
 
+async function sendWhatsAppMessage(to, message) {
+    const url = `https://graph.facebook.com/v18.0/me/messages?access_token=${process.env.MESSENGER_API_KEY}`;
+    try {
+        await axios.post(url, {
+            messaging_product: 'whatsapp',
+            to: to,
+            text: { body: message }
+        });
+        console.log(`Message sent to ${to}: ${message}`);
+    }
+    catch (error) {
+        console.error('Error sending WhatsApp message:', error.response?.data || error.message);
+    }
+}
+
+
+
 async function getGeminiReply(message) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
     try {
