@@ -79,6 +79,55 @@ app.post('/webhook', async (req, res) => {
     }
 });
 
+app.get('/webhook-whatsapp', (req, res) => {
+    const verify_token = process.env.WHATAPPS_VERIFY_TOKEN;
+    const mode = req.query['hub.mode'];
+    const token = req.query['hub.verify_token'];
+    const challenge = req.query['hub.challenge'];
+
+    if (mode && token === verify_token) {
+        console.log("WEBHOOK_VERIFIED");
+        res.status(200).send(challenge);
+    } else {
+        res.sendStatus(403);
+    }
+});
+
+app.post('/webhook-whatsapp', async (req, res) => {
+    console.log('Received WhatsApp message:', JSON.stringify(req.body, null, 2));
+    const message = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+    const from = message?.from;
+    const text = message?.text?.body;
+
+    if (from && text) {
+        const geminiReply = await getGeminiReply(text); // use your Gemini integration function
+        await sendWhatsAppMessage(from, geminiReply);
+    }
+
+    res.sendStatus(200);
+});
+
+async function getGeminiReply(message) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
+    try {
+        const response = await axios.post(url, {
+            contents: [{ parts: [{ text: message }] }]
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-goog-api-key': process.env.GEMINI_API_KEY,
+            }
+        });
+        return response.data.candidates[0].content.parts[0].text;
+    } catch (error) {
+        console.error('Error generating reply:', error);
+        return 'Sorry, I could not process your request at the moment.';
+    }
+}
+
+
+
+
 
 app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
