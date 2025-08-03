@@ -1,3 +1,4 @@
+const { analyzeMessageWithGemini } = require("../services/geminiService");
 const { sendWhatsAppMessage } = require("../services/whatsappService");
 
 const verifyWebhookWhatsapp = (req, res, next) => {
