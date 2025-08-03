@@ -56,12 +56,18 @@ const handleWebhookFacebook = async (req, res) => {
 
                 let parsed;
                 try {
-                    parsed = JSON.parse(geminiResponse);
+                    const cleanedResponse = geminiResponse
+                        .replace(/```json\s*([\s\S]*?)\s*```/, '$1')
+                        .replace(/```[\s\S]*?```/, '')              
+                        .trim();
+
+                    parsed = JSON.parse(cleanedResponse);
                 } catch (err) {
                     console.error('Failed to parse Gemini response:', geminiResponse);
                     await sendMessageToFacebook(senderId, 'Sorry, I didn’t understand that. Can you please rephrase?');
                     continue;
                 }
+
 
                 if (parsed.isProductQuery) {
                     const products = await searchProductsFromDB(parsed.keywords);
