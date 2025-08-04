@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load and parse product data once at startup
-const productDataPath = path.join(__dirname, 'db', 'products.json');
+const productDataPath = path.join(__dirname, '..', 'db', 'products.json');
 console.log(`Loading product data from: ${productDataPath}`);
 let products = [];
 

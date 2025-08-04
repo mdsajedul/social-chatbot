@@ -1,14 +1,13 @@
-
-const rotuer = require('express').Router();
+const router = require('express').Router();
 const {verifyWebhookFacebook, handleWebhookFacebook} = require('../controllers/facebookController');
 const {verifyWebhookWhatsapp, handleWebhookWhatsapp} = require('../controllers/whatsappController');
 
 
-rotuer.get("/webhook", verifyWebhookFacebook);
-rotuer.post("/webhook", handleWebhookFacebook);
+router.get("/webhook", verifyWebhookFacebook);
+router.post("/webhook", handleWebhookFacebook);
 
-rotuer.get("/webhook-whatsapp", verifyWebhookWhatsapp);
-rotuer.post("/webhook-whatsapp", handleWebhookWhatsapp);
+router.get("/webhook-whatsapp", verifyWebhookWhatsapp);
+router.post("/webhook-whatsapp", handleWebhookWhatsapp);
 
 
-module.exports = rotuer;
+module.exports = router;
